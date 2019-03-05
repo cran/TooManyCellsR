@@ -1,0 +1,9 @@
+f33df8113dd9badc25bd0e0d9838bbfd *DESCRIPTION
+e58f6f32c5ec1e1473e98f9601a08846 *NAMESPACE
+8c75ddb3321f2b4688f249a3c37fcd3c *R/TooManyCellsR.R
+6670d3046f3cca6e7140c94eb1e8c160 *inst/extdata/labels.csv
+afcb0aab790b549adfa1604aff5900c9 *inst/extdata/mat.csv
+680940d37274fba4242b284b71e98d0c *man/importResults.Rd
+5a7bf0a081c7663b4d05e00b9add9dd4 *man/tooManyCells.Rd
+6048515e9dd79f6f694a65e17fe75d57 *man/tryFunc.Rd
+2f58465649c54146d4a91b6bcdb485ce *man/writeMatrixFiles.Rd
