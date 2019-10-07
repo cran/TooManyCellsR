@@ -5,7 +5,7 @@
 \title{Execute 'too-many-cells'.}
 \usage{
 tooManyCells(mat, args = c("make-tree"), labels = NULL,
-  output = "out", prior = NULL)
+  output = "out", prior = NULL, docker = NULL, mounts = c())
 }
 \arguments{
 \item{mat}{The input Matrix with gene row names and
@@ -25,6 +25,13 @@ etc.) columns. Optional.}
 \item{prior}{The location of the tree that was already made (previous
 'too-many-cells' output) so quick visual or pruning changes can be made
 without remaking the tree (can potentially save hours).}
+
+\item{docker}{If using 'too-many-cells' with docker, use this argument as the
+command to call. For instance, if version 0.2.1.0 was pulled from Docker
+Hub, set to "gregoryschwartz/too-many-cells:0.2.1.0".}
+
+\item{mounts}{Additional directories to mount if needed for docker.
+The 'prior' argument will automatically mount if specified.}
 }
 \value{
 A list of each output, including the stdout. Reads the

@@ -158,6 +158,11 @@ importResults = function(dir = "out") {
 #' @param prior The location of the tree that was already made (previous
 #'   'too-many-cells' output) so quick visual or pruning changes can be made
 #'   without remaking the tree (can potentially save hours).
+#' @param docker If using 'too-many-cells' with docker, use this argument as the
+#'   command to call. For instance, if version 0.2.1.0 was pulled from Docker
+#'   Hub, set to "gregoryschwartz/too-many-cells:0.2.1.0".
+#' @param mounts Additional directories to mount if needed for docker.
+#'   The 'prior' argument will automatically mount if specified.
 #' @return A list of each output, including the stdout. Reads the
 #'   following files, see \url{https://gregoryschwartz.github.io/too-many-cells/} for
 #'   more details: "dendrogram.svg", "clumpiness.pdf", "projection.pdf",
@@ -193,7 +198,13 @@ tooManyCells = function( mat
                        , labels = NULL
                        , output = "out"
                        , prior = NULL
+                       , docker = NULL
+                       , mounts = c()
                        ) {
+
+  # Convert to absolute paths.
+  dir.create(output, recursive = TRUE)
+  output = normalizePath(output)
 
   # Write matrix.
   tmpdir = writeMatrixFiles(mat, labels)
@@ -211,11 +222,23 @@ tooManyCells = function( mat
 
   # Determine if output already exists.
   if(!is.null(prior)) {
+    prior = normalizePath(prior)
     autoArgs = c(autoArgs, "--prior", prior)
   }
 
   # Run 'too-many-cells'.
-  stdout = system2("too-many-cells", args = c(args, autoArgs), stdout = TRUE)
+  stdout = if(is.null(docker)) {
+             system2("too-many-cells", args = c(args, autoArgs), stdout = TRUE)
+           } else {
+             dockerArgs = c("run", "-i", "--rm"
+                           , "-v" , paste0(tmpdir, ":", tmpdir)
+                           , "-v", paste0(output, ":", output)
+                           , if(is.null(prior)){ NULL } else { c("-v", paste0(dirname(prior), ":", dirname(prior))) }
+                           , unlist(sapply(mounts, function(mount) c("-v", paste0(mount, ":", mount))))
+                           , docker
+                           )
+             system2("docker", args = c(dockerArgs, args, autoArgs), stdout = TRUE)
+           }
 
   # Get the output as a data frame.
   stdoutDf = utils::read.csv(text = stdout)
